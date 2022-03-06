@@ -1,0 +1,39 @@
+{{- range $index, $rule:= ( pluck .Values.werf.env .Values.rules | first | default .Values.rules._default ) }}
+---
+apiVersion: deckhouse.io/v1alpha1
+kind: ClusterAuthorizationRule
+metadata:
+  name: rbac-{{ required "$rule.name required" $rule.name }}
+spec:
+  subjects:
+  {{- range $index_users, $user := $rule.users }}
+  - kind: User
+    name: {{ $user }}
+  {{- end }}
+  {{- range $index_groups, $group := $rule.groups }}
+  - kind: Group
+    name: {{ $group }}
+  {{- end }}
+  {{- range $index_serviceaccounts, $serviceaccount := $rule.serviceaccounts }}
+  - kind: ServiceAccount
+    name: {{ $serviceaccount.name }}
+    namespace: {{ $serviceaccount.namespace }}
+  {{- end }}
+  accessLevel: {{ required "$rule.access_level required" $rule.access_level }}
+  allowScale: true
+  portForwarding: true
+  {{ if $rule.limitNamespaces }}
+  limitNamespaces:
+  {{- range $index_ns, $ns := $rule.limitNamespaces }}
+  - {{ $ns }}
+  {{- end }}
+  {{- end }}
+  {{ if $rule.roles }}
+  additionalRoles:
+  {{- range $index_roles, $role := $rule.roles }}
+  - apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: {{ $role }}
+  {{- end }}
+  {{- end }}
+{{- end }}

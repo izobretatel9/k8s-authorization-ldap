@@ -1,0 +1,9 @@
+rules:
+  _default:
+  - name: "yc-k8s-dev-admins"
+    access_level: SuperAdmin
+    groups:
+    - "yc-k8s-dev-admins"
+    serviceaccounts:
+    - name: active-directory
+      namespace: d8-service-accounts

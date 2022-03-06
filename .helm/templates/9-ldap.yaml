@@ -1,0 +1,26 @@
+apiVersion: deckhouse.io/v1
+kind: DexProvider
+metadata:
+  name: active-directory
+spec:
+  type: LDAP
+  displayName: Active Directory
+  ldap:
+    host: "xxx.xxx.xxx.xxx:389"
+    insecureSkipVerify: true
+    bindDN: "CN=xxx,OU=xxx,OU=xxx,OU=xxx,OU=xxx,DC=xxx,DC=xxx"
+    bindPW: "password"
+    startTLS: true
+    userSearch:
+      baseDN: OU=xxx,OU=xxx,DC=xxx,DC=xxx
+      emailAttr: userPrincipalName
+      idAttr: sAMAccountName
+      nameAttr: givenName
+      username: sAMAccountName
+    groupSearch:
+      baseDN: OU=xxx,OU=xxx,OU=xxx,DC=xxx,DC=xxx
+      nameAttr: cn
+      userMatchers:
+      - groupAttr: 'member:1.2.840.113556.1.4.1941:'
+        userAttr: distinguishedName
+    usernamePrompt: "Username"
